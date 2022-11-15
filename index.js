@@ -24,8 +24,18 @@ const persons = [
     }
 ]
 
+const dbInfo = () => {
+    return `<p>The server has info of ${persons.length} people </p> <p>${new Date()} </p>`;
+}
+
 app.get("/api/persons", (req,res) => {
     res.json(persons);
+})
+
+app.get("/info", (req,res) => {
+    const info = dbInfo();              // summary of persons in DB
+    res.set('Content-Type','text/html');
+    res.send(info);
 })
 
 const PORT = 3001;
