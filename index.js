@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 
-const persons = [
+let persons = [
     { 
       "id": 1,
       "name": "Arto Hellas", 
@@ -46,7 +46,12 @@ app.get("/api/persons/:id", (req,res) => {
     return res.status(404).send(`Person with id : ${id} , does not exist`);
   }
   return res.json(contact); 
-  
+})
+
+app.delete("/api/persons/:id", (req,res) => {
+  const id = Number(req.params.id);
+  persons = (persons.filter(person => person.id !== id));  // filters the array based on the id received
+  res.status(204).end();
 })
 
 const PORT = 3001;
