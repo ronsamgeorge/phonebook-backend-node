@@ -59,16 +59,32 @@ app.delete("/api/persons/:id", (req,res) => {
 
 app.post("/api/persons", (req,res) => {
   const name = req.body.name;
+  if(!name){                                     // check if name parameter is present in the request
+    return res.status(400).json({
+      error: "name parameter missing"
+    })
+  }
+
   const number = req.body.number;
+  if(!number){                                    // check if number paramater is present in the request
+    return res.status(400).json({
+      error: "number parameter missing"
+    })
+  }
+
+  const nameIsInDB = persons.find(person => person.name === name);
+  if(nameIsInDB){                              // check if name of the contact already exists in the DB
+    return res.status(400).json({
+      error: "name already exists"
+    })
+  }
 
   const id = Math.floor(Math.random() * 100);
-
   const newObject = {
     id,
     name,
     number
   }
-
   persons = persons.concat(newObject);
   res.json(newObject);
 })
