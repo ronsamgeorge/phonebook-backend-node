@@ -25,7 +25,7 @@ const persons = [
 ]
 
 const dbInfo = () => {
-    return `<p>The server has info of ${persons.length} people </p> <p>${new Date()} </p>`;
+    return `<p>The server has info of ${persons.length} people</p> <p>${new Date()} </p>`;
 }
 
 app.get("/api/persons", (req,res) => {
@@ -36,6 +36,17 @@ app.get("/info", (req,res) => {
     const info = dbInfo();              // summary of persons in DB
     res.set('Content-Type','text/html');
     res.send(info);
+})
+
+app.get("/api/persons/:id", (req,res) => {
+  const id = Number(req.params.id);             // id of contact to be retrieved, type cast to Number for comparison
+  const contact = persons.find(person => person.id === id);
+
+  if (!contact){
+    return res.status(404).send(`Person with id : ${id} , does not exist`);
+  }
+  return res.json(contact); 
+  
 })
 
 const PORT = 3001;
