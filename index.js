@@ -3,7 +3,13 @@ const app = express();
 const morgan = require('morgan');
 
 app.use(express.json());
-app.use(morgan('tiny'));  // use morgan logger using the tiny format
+
+morgan.token("req-body", function postBody (req,res){
+  const bodyDetail = {name : req.body.name, number : req.body.number};
+  return JSON.stringify(bodyDetail);
+})
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :req-body',{skip: function(req,res){return req.method !== 'POST'}}));  // use morgan to log out req info for POST MEthods only, skip any other methods
 
 let persons = [
     { 
