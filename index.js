@@ -1,8 +1,10 @@
 const express = require("express");
 const app = express();
 const morgan = require('morgan');
+const cors = require('cors');
 
 app.use(express.json());
+app.use(cors());
 
 morgan.token("req-body", function postBody (req,res){
   const bodyDetail = {name : req.body.name, number : req.body.number};
