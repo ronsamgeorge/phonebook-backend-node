@@ -89,21 +89,30 @@ app.post("/api/persons", (req,res) => {
     })
   }
 
-  const nameIsInDB = persons.find(person => person.name === name);
-  if(nameIsInDB){                              // check if name of the contact already exists in the DB
-    return res.status(400).json({
-      error: "name already exists"
-    })
-  }
 
-  const id = Math.floor(Math.random() * 100);
-  const newObject = {
-    id,
-    name,
-    number
-  }
-  persons = persons.concat(newObject);
-  res.json(newObject);
+  const contact = new Person({
+    name: name,
+    number : number
+  })
+
+  contact.save().then(result => res.json(result));
+
+  // const nameIsInDB = persons.find(person => person.name === name);
+  // if(nameIsInDB){                              // check if name of the contact already exists in the DB
+  //   return res.status(400).json({
+  //     error: "name already exists"
+  //   })
+  // }
+
+  // const id = Math.floor(Math.random() * 100);
+  // const newObject = {
+  //   id,
+  //   name,
+  //   number
+  // }
+  // persons = persons.concat(newObject);
+  // res.json(newObject);
+
 })
 
 const PORT = process.env.PORT || 8080;
