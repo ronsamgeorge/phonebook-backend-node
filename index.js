@@ -51,10 +51,14 @@ app.get("/api/persons", (req,res) => {
       })
 })
 
-app.get("/info", (req,res) => {
-    const info = dbInfo();              // summary of persons in DB
-    res.set('Content-Type','text/html');
-    res.send(info);
+app.get("/info", (req,res,next) => {
+  
+    Person.find({}).count()
+    .then(result => {
+      console.log(result)
+      return res.send(`<h3> The DB has ${result} documents currently </h3>`)
+    })
+    .catch(err => next(err))
 })
 
 app.get("/api/persons/:id", (req,res,next) => {
@@ -97,6 +101,25 @@ app.post("/api/persons", (req,res) => {
   })
 
   contact.save().then(result => res.json(result));
+})
+
+
+// Handler to update document depending on id
+app.put("/api/persons/:id", (req,res, next) => {
+  const id = req.params.id;
+  const name = req.body.name;
+  const number = req.body.number;
+
+  const personUpdate = {
+    name,
+    number
+  }
+
+  Person.findByIdAndUpdate(id, personUpdate, {new : true})
+  .then(updatedPerson =>{
+    res.json(updatedPerson);
+  })
+  .catch(err => next(err));
 })
 
 const errorHandler = (err, req, res, next) => {
