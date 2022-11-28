@@ -57,21 +57,21 @@ app.get("/info", (req,res) => {
     res.send(info);
 })
 
-app.get("/api/persons/:id", (req,res) => {
-  const id = Number(req.params.id);             // id of contact to be retrieved, type cast to Number for comparison
-  const contact = persons.find(person => person.id === id);
+app.get("/api/persons/:id", (req,res,next) => {
+  const id = (req.params.id);             // id of contact to be retrieved, type cast to Number for comparison
 
-  if (!contact){
-    return res.status(404).send(`Person with id : ${id} , does not exist`);
-  }
-  return res.json(contact); 
+  Person.findById(id)
+    .then((result) => {
+      return res.json(result);
+    })
+    .catch(err => next(err))
+
 })
 
 app.delete("/api/persons/:id", (req,res) => {
   const id = (req.params.id);
   Person.findByIdAndRemove(id)
   .then((result) =>{
-    console.log(result);
     res.status(204).end();
   })
   .catch(err => console.log(err));
@@ -93,31 +93,23 @@ app.post("/api/persons", (req,res) => {
     })
   }
 
-
   const contact = new Person({
     name: name,
     number : number
   })
 
   contact.save().then(result => res.json(result));
-
-  // const nameIsInDB = persons.find(person => person.name === name);
-  // if(nameIsInDB){                              // check if name of the contact already exists in the DB
-  //   return res.status(400).json({
-  //     error: "name already exists"
-  //   })
-  // }
-
-  // const id = Math.floor(Math.random() * 100);
-  // const newObject = {
-  //   id,
-  //   name,
-  //   number
-  // }
-  // persons = persons.concat(newObject);
-  // res.json(newObject);
-
 })
+
+const errorHandler = (err, req, res, next) => {
+  console.log(err.message);
+  if (err.name === 'CastError'){
+    return res.status(400).send({error: "Malformatted id"});
+  }
+  next(err);
+}
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
