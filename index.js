@@ -58,14 +58,12 @@ app.get("/info", (req,res) => {
 })
 
 app.get("/api/persons/:id", (req,res,next) => {
-  const id = (req.params.id);             // id of contact to be retrieved, type cast to Number for comparison
-
-  Person.findById(id)
+  const id = (req.params.id);            
+  Person.findById(id)                     // Find the required Document with id
     .then((result) => {
       return res.json(result);
     })
     .catch(err => next(err))
-
 })
 
 app.delete("/api/persons/:id", (req,res) => {
