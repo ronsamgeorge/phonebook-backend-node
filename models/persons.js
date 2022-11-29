@@ -15,7 +15,11 @@ mongoose
 
 // create DB Schema
 const personSchema = new mongoose.Schema({
-    name : String,
+    name : {
+        type : String,
+        minLength : [3, "Name should be min 3 characters in length"],
+        required : true
+    },
     number : Number
 })
 

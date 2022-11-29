@@ -40,9 +40,6 @@ let persons = [
     }
 ]
 
-const dbInfo = () => {
-    return `<p>The server has info of ${persons.length} people</p> <p>${new Date()} </p>`;
-}
 
 app.get("/api/persons", (req,res) => {
     Person.find({})
@@ -80,7 +77,7 @@ app.delete("/api/persons/:id", (req,res) => {
 })
 
 
-app.post("/api/persons", (req,res) => {
+app.post("/api/persons", (req,res,next) => {
   const name = req.body.name;
   if(!name){                                     // check if name parameter is present in the request
     return res.status(400).json({
@@ -100,7 +97,7 @@ app.post("/api/persons", (req,res) => {
     number : number
   })
 
-  contact.save().then(result => res.json(result));
+  contact.save().then(result => res.json(result)).catch(err => next(err));
 })
 
 
@@ -127,6 +124,11 @@ const errorHandler = (err, req, res, next) => {
   if (err.name === 'CastError'){
     return res.status(400).send({error: "Malformatted id"});
   }
+
+  if(err.name === 'ValidationError'){
+    return res.status(400).json({error : err.message});
+  }
+
   next(err);
 }
 
